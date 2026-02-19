@@ -23,3 +23,20 @@ export const getJobList = async () => {
     const data = await res.json();
     return data;
 }
+
+export const submitApplication = async (data) => {
+    
+    const res = await fetch(`${BASE_URL}/api/candidate/apply-to-job`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Something went wrong...');
+    }
+
+}
