@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Loading from './Loading';
+import { submitApplication } from '../services/api';
+import Error from './Error';
 
 const JobListItem = ({ job, candidate }) => {
 
@@ -25,16 +27,17 @@ const JobListItem = ({ job, candidate }) => {
 
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true)
-        setTimeout(()=>{
-            setLoading(false)
-            setSuccess(true)
-        },2000);
-
-        const body = JSON.stringify(formData);
-        console.log(body)
+        try {
+            await submitApplication(formData);
+            setSuccess(true);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -51,10 +54,8 @@ const JobListItem = ({ job, candidate }) => {
                     <p>✅ You have succesfully applied to this position!</p>
                 </div>
             : error ?
-                <div className='gray card-field-container'>
-                    <p>
-                        ❌ Something went wrong... Please click <span className='retry-btn' onClick={()=>setError(false)}>here</span> to retry.
-                    </p>
+                <div className="card-field-container">
+                    <Error error={error} retry={()=>setError(null)} compact/>
                 </div>
             :
                 <>
