@@ -1,9 +1,11 @@
-const Error = ({error}) => {
+const Error = ({ error, retry }) => {
   console.log('error desde componente error>>>>> ', error)
   return (
     <div className="container centered">
-      <h2 className="light">Something went wrong. Please try again!</h2>
-      <p className="gray">{error.name}: {error.message}</p>
+      <div className="error-container">
+        <h2 className="light">❌ Something went wrong... Please click <span className='retry-btn' onClick={retry}>here</span> to retry.</h2>
+        <p className="gray">{error.name}: {error.message}</p>
+      </div>
     </div>
   )
 }
