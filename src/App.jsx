@@ -7,31 +7,32 @@ import JobList from './components/JobList';
 function App() {
   const [candidate, setCandidate] = useState();
   const [jobs, setJobs] = useState();
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState();
 
   const email = "ignaciogimenez.w@gmail.com";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const candidateData = await getCandidateByEmail(email);
-        setCandidate(candidateData);
-        const jobsData = await getJobList();
-        setJobs(jobsData);
-        console.log(jobsData)
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    setError(null);
+    setLoading(true)
+    try {
+      const candidateData = await getCandidateByEmail(email);
+      setCandidate(candidateData);
+      const jobsData = await getJobList();
+      setJobs(jobsData);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchData();
   }, [])
 
   if (loading) return <Loading />
-  if (error) return <Error error={error} />
+  if (error) return <Error error={error} retry={fetchData} />
   return (
     <div className='container'>
       <h1 className='title'>
@@ -39,7 +40,7 @@ function App() {
         <span className='bold'>{candidate?.firstName} {candidate?.lastName}</span>
       </h1>
       <h2 className='sub medium gray'>Please apply to any of the available positions listed below:</h2>
-      <JobList jobs={jobs} />
+      <JobList jobs={jobs} candidate={candidate} />
     </div>
   )
 }
